@@ -109,13 +109,19 @@ export default function RestorePage() {
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
     a.download = 'vc-image-restore.zip'
+    document.body.appendChild(a)
     a.click()
+    document.body.removeChild(a)
   }
 
   function downloadSingle(i: number) {
     const url = results[i]; if (!url) return
     const a = document.createElement('a')
-    a.href = url; a.download = `vc-restored-${i + 1}.jpg`; a.click()
+    a.href = url
+    a.download = `vc-restored-${i + 1}.jpg`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
   }
 
   const anyProcessed = processedSet.size > 0
@@ -178,13 +184,24 @@ export default function RestorePage() {
                     </div>
               )}
               {results[selected] && (
-                <button onClick={() => downloadSingle(selected)}
-                  className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm transition-colors">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Download this image
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button onClick={() => downloadSingle(selected)}
+                    className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-colors">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Enhanced Photo
+                  </button>
+                  {files.length > 1 && (
+                    <button onClick={downloadAll}
+                      className="flex-1 flex items-center justify-center gap-2 border border-zinc-600 hover:border-zinc-400 text-zinc-300 hover:text-white font-medium py-3 rounded-xl transition-colors">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Download All as ZIP
+                    </button>
+                  )}
+                </div>
               )}
               <ThumbnailStrip previews={previews} selected={selected} onSelect={setSelected} processedIndices={processedSet} />
             </div>
