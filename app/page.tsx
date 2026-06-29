@@ -1,107 +1,127 @@
-import Link from "next/link";
-import { ArrowRight, ShieldCheck, UploadCloud, SlidersHorizontal, Download } from "lucide-react";
-import { Navbar } from "@/components/site/navbar";
-import { Footer } from "@/components/site/footer";
-import { FeatureGrid } from "@/components/landing/feature-grid";
-import { BeforeAfterDemo } from "@/components/landing/before-after-demo";
-import { buttonClasses } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+'use client'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { NameModal } from '@/components/name-modal'
+import { Navbar } from '@/components/site/navbar'
+import { Footer } from '@/components/site/footer'
 
-const steps = [
-  { icon: UploadCloud, title: "Upload", description: "Drag in a JPG, PNG, or WEBP — old print scans work great." },
-  { icon: SlidersHorizontal, title: "Choose restorations", description: "Auto-restore, or pick denoise, sharpen, color, upscale, and more." },
-  { icon: Download, title: "Compare & download", description: "Slide between before/after, then save the full-quality result." },
-];
+const FEATURES = [
+  { icon: '🔇', title: 'Denoise', desc: 'Remove grain and digital noise from old scans.' },
+  { icon: '🔍', title: 'Sharpen / Deblur', desc: 'Restore crisp details from blurry photos.' },
+  { icon: '🩹', title: 'Scratch Cleanup', desc: 'Erase scratches, dust, and surface damage.' },
+  { icon: '🎨', title: 'Color Correction', desc: 'Fix faded and washed-out colors automatically.' },
+  { icon: '🤖', title: 'Face Enhancement', desc: 'AI-powered restoration of facial details.' },
+  { icon: '🌈', title: 'Colorization', desc: 'Turn black & white photos into vivid color with AI.' },
+  { icon: '⬆️', title: '2× / 4× Upscale', desc: 'Double or quadruple resolution with AI super-resolution.' },
+  { icon: '📦', title: 'Batch Processing', desc: 'Enhance up to 10 images in one go.' },
+]
 
 export default function HomePage() {
-  return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
+  const [showModal, setShowModal] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
 
-      <main className="flex-1">
-        <section className="relative overflow-hidden bg-grid">
-          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/10 via-transparent to-transparent" />
-          <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
-            <div className="animate-fade-in-up">
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5" /> Your photos aren&apos;t stored unless you say so
+  useEffect(() => {
+    const saved = localStorage.getItem('vc_user_name')
+    if (saved) setUserName(saved)
+  }, [])
+
+  function handleNameSubmit(name: string) {
+    setUserName(name)
+    setShowModal(false)
+  }
+
+  function handleCTA() {
+    if (!userName) { setShowModal(true); return }
+    window.location.href = '/restore'
+  }
+
+  return (
+    <>
+      {showModal && <NameModal onSubmit={handleNameSubmit} />}
+      <div className="flex min-h-screen flex-col bg-zinc-950">
+        <Navbar />
+
+        <main className="flex-1">
+          {/* Hero */}
+          <section className="relative overflow-hidden px-6 py-24 md:py-32 text-center">
+            <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/30 via-zinc-950 to-zinc-950 pointer-events-none" />
+            <div className="relative max-w-3xl mx-auto space-y-6">
+              <span className="inline-flex items-center gap-2 rounded-full border border-indigo-800/50 bg-indigo-950/40 px-4 py-1.5 text-xs font-medium text-indigo-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                Free · No account needed · Photos never stored
               </span>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                Bring old, blurry,{" "}
-                <span className="gradient-text">faded photos</span> back to life
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
+                Bring faded, blurry,<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+                  damaged photos
+                </span>{' '}
+                back to life
               </h1>
-              <p className="mt-5 max-w-lg text-lg text-muted-foreground">
-                Upload a damaged, noisy, scratched, or low-resolution photo and restore it in seconds —
-                denoise, sharpen, fix color, repair scratches, and upscale up to 4x.
+              <p className="text-lg text-zinc-400 max-w-xl mx-auto">
+                Denoise, sharpen, fix colors, enhance faces, colorize, and upscale — up to 10 images at once. Results download as JPEG instantly.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link href="/restore" className={buttonClasses("default", "lg")}>
-                  Restore a Photo <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link href="#how-it-works" className={buttonClasses("outline", "lg")}>
-                  See how it works
-                </Link>
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <button onClick={handleCTA}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3.5 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/20">
+                  {userName ? `Restore Photos, ${userName}` : 'Start Restoring'}
+                </button>
+                <a href="#features" className="text-zinc-400 hover:text-white text-sm font-medium transition-colors">
+                  See all features ↓
+                </a>
               </div>
             </div>
+          </section>
 
-            <div className="animate-fade-in-up">
-              <BeforeAfterDemo />
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                Illustrative preview — drag the handle to compare
-              </p>
+          {/* How it works */}
+          <section className="max-w-5xl mx-auto px-6 py-16">
+            <h2 className="text-center text-2xl font-bold text-white mb-10">How it works</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {[
+                { n: '1', title: 'Upload your photos', desc: 'Drag and drop up to 10 images — JPEG, PNG, WEBP, HEIC, TIFF, BMP, GIF all supported.' },
+                { n: '2', title: 'Choose enhancements', desc: 'Toggle denoise, sharpen, color correction, face AI, colorization, and upscale independently.' },
+                { n: '3', title: 'Download as JPEG', desc: 'Compare before/after with the drag slider, then download all images in a single ZIP.' },
+              ].map(step => (
+                <div key={step.n} className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6 space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-600/20 flex items-center justify-center text-indigo-400 font-bold text-lg">{step.n}</div>
+                  <h3 className="text-white font-semibold">{step.title}</h3>
+                  <p className="text-zinc-400 text-sm leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section id="how-it-works" className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-center text-3xl font-bold tracking-tight">How it works</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-muted-foreground">
-            Three steps, no account required.
-          </p>
-          <div className="mt-12 grid gap-6 sm:grid-cols-3">
-            {steps.map((step, i) => (
-              <Card key={step.title}>
-                <CardContent className="flex flex-col gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <step.icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="font-semibold">{i + 1}. {step.title}</h3>
-                  <p className="text-sm text-muted-foreground">{step.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+          {/* Features */}
+          <section id="features" className="max-w-5xl mx-auto px-6 py-16">
+            <h2 className="text-center text-2xl font-bold text-white mb-10">Restoration tools</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {FEATURES.map(f => (
+                <div key={f.title} className="rounded-2xl bg-zinc-900 border border-zinc-800 p-5 space-y-2 hover:border-zinc-700 transition-colors">
+                  <div className="text-2xl">{f.icon}</div>
+                  <h3 className="text-white font-semibold text-sm">{f.title}</h3>
+                  <p className="text-zinc-500 text-xs leading-relaxed">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-        <section className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-center text-3xl font-bold tracking-tight">Restoration tools</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-muted-foreground">
-            Mix and match, or let Auto Restore choose for you.
-          </p>
-          <div className="mt-12">
-            <FeatureGrid />
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-4xl px-6 py-20">
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
-            <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-              <ShieldCheck className="h-8 w-8 text-primary" />
-              <h2 className="text-2xl font-bold">Privacy by default</h2>
-              <p className="max-w-xl text-muted-foreground">
-                Your photo is processed in memory for a single request and is never written to a
-                database. Recent Restores history lives only in your browser, is opt-in per photo,
-                and you can clear it any time.
+          {/* Privacy CTA */}
+          <section className="max-w-3xl mx-auto px-6 py-16 text-center">
+            <div className="rounded-2xl border border-indigo-800/30 bg-indigo-950/20 p-10 space-y-4">
+              <div className="text-3xl">🔒</div>
+              <h2 className="text-white text-2xl font-bold">Privacy first, always</h2>
+              <p className="text-zinc-400 leading-relaxed">
+                Your photos are processed in memory for a single request and immediately discarded. We never write them to a database or storage bucket.
               </p>
-              <Link href="/restore" className={buttonClasses("default", "lg")}>
-                Try it now <ArrowRight className="h-4 w-4" />
-              </Link>
-            </CardContent>
-          </Card>
-        </section>
-      </main>
+              <button onClick={handleCTA}
+                className="inline-block mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-7 py-3 rounded-xl transition-colors">
+                Try it free →
+              </button>
+            </div>
+          </section>
+        </main>
 
-      <Footer />
-    </div>
-  );
+        <Footer />
+      </div>
+    </>
+  )
 }

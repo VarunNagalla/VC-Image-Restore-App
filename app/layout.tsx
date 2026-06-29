@@ -1,19 +1,18 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme/theme-provider";
+import type { Metadata } from 'next'
+import './globals.css'
 
 export const metadata: Metadata = {
-  title: "Image Restore — Bring old photos back to life",
-  description:
-    "Restore old, blurry, scratched, faded, or low-resolution photos with denoise, sharpen, color correction, upscaling, and more. Your photos are processed in memory and never stored without your permission.",
-};
+  title: 'VC Image Restore — Bring old photos back to life',
+  description: 'Restore old, blurry, scratched, and faded photos with AI-powered denoise, sharpen, color correction, face enhancement, colorization, and 4× upscale. Photos are processed in memory and never stored.',
+  authors: [{ name: 'Varun Nagalla' }],
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+    <html lang="en">
+      <body className="min-h-screen antialiased bg-zinc-950 text-white">
+        {children}
       </body>
     </html>
-  );
+  )
 }
